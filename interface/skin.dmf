@@ -121,7 +121,7 @@ macro "default"
 		command = "say"
 	elem 
 		name = "F5"
-		command = "Aghost"
+		command = "asay"
 	elem 
 		name = "F6"
 		command = "Player-Panel"
