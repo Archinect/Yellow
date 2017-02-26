@@ -247,6 +247,7 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	item = /obj/item/weapon/grenade/syndieminibomb
 	cost = 6
 
+/datum/uplink_item/dangerous/syndifire
 	name = "Syndifire"
 	desc = "That smell that you love in the morning."
 	item = /obj/item/weapon/extinguisher/syndifire
