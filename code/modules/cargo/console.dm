@@ -142,6 +142,7 @@
 			var/reason = ""
 			if(requestonly)
 				reason = input("Reason:", name, "") as text|null
+				reason = sanitize_a0(reason)
 				if(isnull(reason) || ..())
 					return
 
