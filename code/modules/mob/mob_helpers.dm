@@ -113,6 +113,7 @@
 			if(20)
 				newletter+="[newletter][newletter]"
 		newphrase+="[newletter]";counter-=1
+	newphrase = copytext(sanitize_a0(newphrase), 1, MAX_MESSAGE_LEN)
 	return newphrase
 
 

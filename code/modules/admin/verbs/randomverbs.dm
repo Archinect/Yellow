@@ -53,7 +53,7 @@
 		return
 
 	var/msg = input("Message:", text("Enter the text you wish to appear to everyone:")) as text
-
+	msg = sanitize_a0(msg)
 	if (!msg)
 		return
 	text2world("[msg]")
@@ -76,7 +76,7 @@
 		return
 
 	var/msg = input("Message:", text("Enter the text you wish to appear to your target:")) as text
-
+	msg = sanitize_a0(msg)
 	if( !msg )
 		return
 
@@ -98,6 +98,7 @@
 	if(!range)
 		return
 	var/msg = input("Message:", text("Enter the text you wish to appear to everyone within view:")) as text
+	msg = sanitize_a0(msg)
 	if (!msg)
 		return
 	for(var/mob/M in view(range,A))
