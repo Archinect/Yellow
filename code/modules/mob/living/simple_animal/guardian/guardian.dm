@@ -264,6 +264,7 @@ var/global/list/parasites = list() //all currently existing/living guardians
 /mob/living/simple_animal/hostile/guardian/proc/Communicate()
 	if(summoner)
 		var/input = stripped_input(src, "Please enter a message to tell your summoner.", "Guardian", "")
+		input = sanitize_a0(input)
 		if(!input)
 			return
 

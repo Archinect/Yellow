@@ -117,6 +117,7 @@ var/datum/subsystem/shuttle/SSshuttle
 		user.text2tab("Call request blocked by [pick(list("GRIFFON particle emissions","bluespace disruptions","quantum fluctuations","bad karma","odd smells"))] from a nearby warp engine.")
 		return
 
+	call_reason = sanitize_a0(call_reason)
 	call_reason = trim(html_encode(call_reason))
 
 	if(length(call_reason) < CALL_SHUTTLE_REASON_LENGTH)
