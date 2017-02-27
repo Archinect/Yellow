@@ -573,6 +573,7 @@ var/const/CALL_SHUTTLE_REASON_LENGTH = 12
 
 /obj/machinery/computer/communications/proc/make_announcement(mob/living/user, is_silicon)
 	var/input = input(user, "Please choose a message to announce to the station crew.", "What?")
+	input = sanitize_a0(input)
 	if(!input || !user.canUseTopic(src))
 		return
 	if(is_silicon)
