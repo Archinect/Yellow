@@ -30,9 +30,6 @@
 	outdoors = 1
 	ambientsounds = list('sound/ambience/ambimine.ogg')
 
-/area/mine/pod
-	name = "Mining station Pod"
-
 /area/mine/lobby
 	name = "Mining station"
 
