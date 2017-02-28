@@ -43,22 +43,29 @@
 	return t
 
 //Removes a few problematic characters
+/proc/sanitize_simple(t,list/repl_chars = list("ÿ"="____255_"))
+	for(var/char in repl_chars)
+		var/index = findtext(t, char)
+		while(index)
+			t = copytext(t, 1, index) + repl_chars[char] + copytext(t, index+1)
+			index = findtext(t, char, index+1)
+	return t
 
 //Runs byond's sanitization proc along-side sanitize_simple
 /proc/sanitize(t,list/repl_chars = null)
-	t = rhtml_encode(trim(sanitize_simple(t, repl_chars)))
+	t = html_encode(trim(sanitize_simple(t, repl_chars)))
 	t = replacetext(t, "____255_", "&#255;")//cp1251
 	return t
 
 //Runs sanitize and strip_html_simple
-//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' after sanitize() calls byond's rhtml_encode()
+//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' after sanitize() calls byond's html_encode()
 /proc/strip_html(t,limit=MAX_MESSAGE_LEN)
 	return copytext((sanitize(strip_html_simple(t))),1,limit)
 
 //Runs byond's sanitization proc along-side strip_html_simple
-//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' that rhtml_encode() would cause
+//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' that html_encode() would cause
 /proc/adminscrub(t,limit=MAX_MESSAGE_LEN)
-	return copytext((rhtml_encode(strip_html_simple(t))),1,limit)
+	return copytext((html_encode(strip_html_simple(t))),1,limit)
 
 
 //Returns null if there is any bad text in the string
@@ -85,7 +92,7 @@
 /proc/stripped_input(mob/user, message = "", title = "", default = "", max_length=MAX_MESSAGE_LEN)
 	var/name = input(user, message, title, default) as text|null
 	name = replacetext(name, "ÿ", "___255_")
-	name = trim(rhtml_encode(name), max_length) //trim is "outside" because rhtml_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
+	name = trim(html_encode(name), max_length) //trim is "outside" because html_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
 	name = replacetext(name, "___255_", "ÿ")
 	return name
 
@@ -93,7 +100,7 @@
 /proc/stripped_multiline_input(mob/user, message = "", title = "", default = "", max_length=MAX_MESSAGE_LEN)
 	var/name = input(user, message, title, default) as message|null
 	name = replacetext(name, "ÿ", "___255_")
-	name = rhtml_encode(trim(name, max_length)) //trim is "inside" because rhtml_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
+	name = html_encode(trim(name, max_length)) //trim is "inside" because html_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
 	name = replacetext(name, "___255_", "ÿ")
 	return name
 
@@ -171,7 +178,7 @@
 
 	return t_out
 
-//rhtml_encode helper proc that returns the smallest non null of two numbers
+//html_encode helper proc that returns the smallest non null of two numbers
 //or 0 if they're both null (needed because of findtext returning 0 when a value is not present)
 /proc/non_zero_min(a, b)
 	if(!a)
@@ -461,7 +468,7 @@ var/list/binary = list("0","1")
 
 //convertion cp1251 to unicode
 /proc/sanitize_o(t,list/repl_chars = null)
-	t = rhtml_encode(trim(sanitize_simple_o(t, repl_chars)))
+	t = html_encode(trim(sanitize_simple_o(t, repl_chars)))
 	return t
 
 /proc/sanitize_simple_o(t,list/repl_chars = list("\n"="#","\t"="#"))
@@ -474,7 +481,7 @@ var/list/binary = list("0","1")
 
 //unicode sanitization
 /proc/sanitize_u(t,list/repl_chars = null)
-	t = rhtml_encode(sanitize_simple(t,repl_chars))
+	t = html_encode(sanitize_simple(t,repl_chars))
 	t = replacetext(t, "____255_", "&#1103;")
 	return t
 
@@ -693,67 +700,3 @@ var/list/binary = list("0","1")
 	var/list/tosend = list()
 	tosend["data"] = finalized
 	log << json_encode(tosend)
-
-
-
-
-/proc/sanitize_simple(var/t,var/list/repl_chars = list("ÿ"="&#255;", "\n"="#","\t"="#"))
-	for(var/char in repl_chars)
-		var/index = findtext(t, char)
-		while(index)
-			t = copytext(t, 1, index) + repl_chars[char] + copytext(t, index+1)
-			index = findtext(t, char)
-	return t
-
-proc/sanitize_russian(var/msg, var/html = 0)
-	var/rep
-	if(html)
-		rep = "&#x44F;"
-	else
-		rep = "&#255;"
-	var/index = findtext(msg, "ÿ")
-	while(index)
-		msg = copytext(msg, 1, index) + rep + copytext(msg, index + 1)
-		index = findtext(msg, "ÿ")
-	return msg
-
-/proc/rhtml_encode(var/msg, var/html = 0)
-	var/rep
-	if(html)
-		rep = "&#x44F;"
-	else
-		rep = "&#255;"
-	var/list/c = text2list(msg, "ÿ")
-	if(c.len == 1)
-		c = text2list(msg, rep)
-		if(c.len == 1)
-			return html_encode(msg)
-	var/out = ""
-	var/first = 1
-	for(var/text in c)
-		if(!first)
-			out += rep
-		first = 0
-		out += html_encode(text)
-	return out
-
-/proc/rhtml_decode(var/msg, var/html = 0)
-	var/rep
-	if(html)
-		rep = "&#x44F;"
-	else
-		rep = "&#255;"
-	var/list/c = text2list(msg, "ÿ")
-	if(c.len == 1)
-		c = text2list(msg, "&#255;")
-		if(c.len == 1)
-			c = text2list(msg, "&#x4FF")
-			if(c.len == 1)
-				return html_decode(msg)
-	var/out = ""
-	var/first = 1
-	for(var/text in c)
-		if(!first)
-			out += rep
-		first = 0
-		out += html_decode(text)
