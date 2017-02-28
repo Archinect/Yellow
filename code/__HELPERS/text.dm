@@ -45,8 +45,8 @@
 //Removes a few problematic characters
 
 //Runs byond's sanitization proc along-side sanitize_simple
-/proc/sanitize(t,list/repl_chars = null)
-	t = rhtml_encode(trim(sanitize_simple(t, repl_chars)))
+/proc/sanitize(t,list/repl_chars = null,var/html)
+	t = rhtml_encode(trim(sanitize_simple(t, repl_chars)),html)
 	t = replacetext(t, "____255_", "&#255;")//cp1251
 	return t
 
