@@ -12,7 +12,7 @@
 		return
 
 
-	message = trim(rhtml_encode(message))
+	message = trim(html_encode(message))
 	message = copytext(sanitize_a0(message), 1, MAX_MESSAGE_LEN)
 	if(!can_speak(message))
 		return

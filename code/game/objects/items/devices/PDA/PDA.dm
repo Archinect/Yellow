@@ -847,7 +847,7 @@ var/global/list/obj/item/device/pda/PDAs = list()
 		note = replacetext(note, "<li>", "\[*\]")
 		note = replacetext(note, "<ul>", "\[list\]")
 		note = replacetext(note, "</ul>", "\[/list\]")
-		note = rhtml_encode(note)
+		note = html_encode(note)
 		notescanned = 1
 		user.text2tab("<span class='notice'>Paper scanned. Saved to PDA's notekeeper.</span>") //concept of scanning paper copyright brainoblivion 2009
 

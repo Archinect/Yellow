@@ -118,7 +118,7 @@ var/datum/subsystem/shuttle/SSshuttle
 		return
 
 	call_reason = sanitize_a0(call_reason)
-	call_reason = trim(rhtml_encode(call_reason))
+	call_reason = trim(html_encode(call_reason))
 
 	if(length(call_reason) < CALL_SHUTTLE_REASON_LENGTH)
 		user.text2tab("You must provide a reason.")

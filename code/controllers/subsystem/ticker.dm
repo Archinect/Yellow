@@ -457,9 +457,9 @@ var/datum/subsystem/ticker/ticker
 	var/list/randomtips = file2list("config/tips.txt")
 	var/list/memetips = file2list("config/sillytips.txt")
 	if(randomtips.len && prob(95))
-		text2world("<font color='purple'><b>Tip of the round: </b>[rhtml_encode(pick(randomtips))]</font>")
+		text2world("<font color='purple'><b>Tip of the round: </b>[html_encode(pick(randomtips))]</font>")
 	else if(memetips.len)
-		text2world("<font color='purple'><b>Tip of the round: </b>[rhtml_encode(pick(memetips))]</font>")
+		text2world("<font color='purple'><b>Tip of the round: </b>[html_encode(pick(memetips))]</font>")
 
 /datum/subsystem/ticker/proc/check_queue()
 	if(!queued_players.len || !config.hard_popcap)
