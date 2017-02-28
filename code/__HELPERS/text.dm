@@ -20,9 +20,9 @@
 	return copytext(sqltext, 2, lentext(sqltext));//Quote() adds quotes around input, we already do that
 
 /proc/sanitizeSQL_a0(t as text)
-	t = replacetext(t, "ˇ", "&#1103;")
+	t = replacetext(t, "—è", "&#1103;")
 	var/sqltext = dbcon.Quote(t);
-	return copytext(sqltext, 2, lentext(sqltext)); //Quote() adds quotes around input, we already do that and fix "ˇ"
+	return copytext(sqltext, 2, lentext(sqltext)); //Quote() adds quotes around input, we already do that and fix "—è"
 
 /proc/format_table_name(table as text)
 	return sqlfdbktableprefix + table
@@ -45,8 +45,8 @@
 //Removes a few problematic characters
 
 //Runs byond's sanitization proc along-side sanitize_simple
-/proc/sanitize(t,list/repl_chars = null)
-	t = rhtml_encode(trim(sanitize_simple(t, repl_chars)))
+/proc/sanitize(t,list/repl_chars = null,var/html)
+	t = rhtml_encode(trim(sanitize_simple(t, repl_chars)),html)
 	t = replacetext(t, "____255_", "&#255;")//cp1251
 	return t
 
@@ -71,7 +71,7 @@
 			if(62,60,92,47)
 				return			//rejects the text if it contains these bad characters: <, >, \ or /
 			if(127 to 255)
-				return			//rejects weird letters like ÔøΩ
+				return			//rejects weird letters like –ø—ó–Ö
 			if(0 to 31)
 				return			//more weird stuff
 			if(32)
@@ -84,17 +84,17 @@
 // Used to get a properly sanitized input, of max_length
 /proc/stripped_input(mob/user, message = "", title = "", default = "", max_length=MAX_MESSAGE_LEN)
 	var/name = input(user, message, title, default) as text|null
-	name = replacetext(name, "ˇ", "___255_")
+	name = replacetext(name, "—è", "___255_")
 	name = trim(rhtml_encode(name), max_length) //trim is "outside" because rhtml_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
-	name = replacetext(name, "___255_", "ˇ")
+	name = replacetext(name, "___255_", "—è")
 	return name
 
 // Used to get a properly sanitized multiline input, of max_length
 /proc/stripped_multiline_input(mob/user, message = "", title = "", default = "", max_length=MAX_MESSAGE_LEN)
 	var/name = input(user, message, title, default) as message|null
-	name = replacetext(name, "ˇ", "___255_")
+	name = replacetext(name, "—è", "___255_")
 	name = rhtml_encode(trim(name, max_length)) //trim is "inside" because rhtml_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
-	name = replacetext(name, "___255_", "ˇ")
+	name = replacetext(name, "___255_", "—è")
 	return name
 
 //Filters out undesirable characters from names
@@ -263,7 +263,7 @@
 			. += ascii2text(168)
 		else
 			. += ascii2text(a)
-	. = replacetext(.,"&#255;","ﬂ")
+	. = replacetext(.,"&#255;","–Ø")
 
 /proc/rlowertext(t as text)
 	t = lowertext(t)
@@ -450,7 +450,7 @@ var/list/binary = list("0","1")
 	t = replacetext(t, "\[/small\]", "</font>")
 	t = replacetext(t, "\[list\]", "<ul>")
 	t = replacetext(t, "\[/list\]", "</ul>")
-	t = replacetext(t, "ˇ", "&#1103;")
+	t = replacetext(t, "—è", "&#1103;")
 
 	return t
 
@@ -490,28 +490,28 @@ var/list/binary = list("0","1")
 
 //clean sanitize cp1251
 /proc/sanitize_a0(t)
-	t = replacetext(t, "ˇ", "&#255;")
+	t = replacetext(t, "—è", "&#255;")
 	return t
 
 //clean sanitize unicode
 /proc/sanitize_u0(t)
-	t = replacetext(t, "ˇ", "&#1103;")
+	t = replacetext(t, "—è", "&#1103;")
 	return t
 
 /proc/remore_cyrillic(t)
-	var/list/symbols = list("‡", "·", "‚", "„", "‰", "Â", "∏", "Ê", "Á", "Ë", "È", "Í", "Î", "Ï", \
-	"Ì", "Ó", "Ô", "", "Ò", "Ú", "Û", "Ù", "ı", "ˆ", "˜", "¯", "˘", "¸", "˚", "˙", "˝", "˛", "ˇ", \
-	"¿", "¡", "¬", "√", "ƒ", "≈", "®", "∆", "«", "»", "…", " ", "À", "Ã", "Õ", "Œ", "œ", \
-	"–", "—", "“", "”", "‘", "’", "÷", "◊", "ÿ", "Ÿ", "‹", "€", "⁄", "›", "ﬁ", "ﬂ")
+	var/list/symbols = list("–∞", "–±", "–≤", "–≥", "–¥", "–µ", "—ë", "–∂", "–∑", "–∏", "–π", "–∫", "–ª", "–º", \
+	"–Ω", "–æ", "–ø", "—Ä", "—Å", "—Ç", "—É", "—Ñ", "—Ö", "—Ü", "—á", "—à", "—â", "—å", "—ã", "—ä", "—ç", "—é", "—è", \
+	"–ê", "–ë", "–í", "–ì", "–î", "–ï", "–Å", "–ñ", "–ó", "–ò", "–ô", "–ö", "–õ", "–ú", "–ù", "–û", "–ü", \
+	"–†", "–°", "–¢", "–£", "–§", "–•", "–¶", "–ß", "–®", "–©", "–¨", "–´", "–™", "–≠", "–Æ", "–Ø")
 	for(var/i in symbols)
 		t = replacetext(t, i, "")
 	return t
 
 /proc/extA2U(t)
-	//®, ∏
+	//–Å, —ë
 	t = replacetextEx(t, "\\xa8", "\\u0401")
 	t = replacetextEx(t, "\\xb8", "\\u0451")
-	//¿-œ
+	//–ê-–ü
 	t = replacetextEx(t, "\\xc0", "\\u0410")
 	t = replacetextEx(t, "\\xc1", "\\u0411")
 	t = replacetextEx(t, "\\xc2", "\\u0412")
@@ -528,7 +528,7 @@ var/list/binary = list("0","1")
 	t = replacetextEx(t, "\\xcd", "\\u041d")
 	t = replacetextEx(t, "\\xce", "\\u041e")
 	t = replacetextEx(t, "\\xcf", "\\u041f")
-	//–-ﬂ
+	//–†-–Ø
 	t = replacetextEx(t, "\\xd0", "\\u0420")
 	t = replacetextEx(t, "\\xd1", "\\u0421")
 	t = replacetextEx(t, "\\xd2", "\\u0422")
@@ -545,7 +545,7 @@ var/list/binary = list("0","1")
 	t = replacetextEx(t, "\\xdd", "\\u042d")
 	t = replacetextEx(t, "\\xde", "\\u042e")
 	t = replacetextEx(t, "\\xdf", "\\u042f")
-	//‡-Ô
+	//–∞-–ø
 	t = replacetextEx(t, "\\xe0", "\\u0430")
 	t = replacetextEx(t, "\\xe1", "\\u0431")
 	t = replacetextEx(t, "\\xe2", "\\u0432")
@@ -562,7 +562,7 @@ var/list/binary = list("0","1")
 	t = replacetextEx(t, "\\xed", "\\u043d")
 	t = replacetextEx(t, "\\xee", "\\u043e")
 	t = replacetextEx(t, "\\xef", "\\u043f")
-	//-ˇ
+	//—Ä-—è
 	t = replacetextEx(t, "\\xf0", "\\u0440")
 	t = replacetextEx(t, "\\xf1", "\\u0441")
 	t = replacetextEx(t, "\\xf2", "\\u0442")
@@ -697,7 +697,7 @@ var/list/binary = list("0","1")
 
 
 
-/proc/sanitize_simple(var/t,var/list/repl_chars = list("ˇ"="&#255;", "\n"="#","\t"="#"))
+/proc/sanitize_simple(var/t,var/list/repl_chars = list("—è"="&#255;", "\n"="#","\t"="#"))
 	for(var/char in repl_chars)
 		var/index = findtext(t, char)
 		while(index)
@@ -711,10 +711,10 @@ proc/sanitize_russian(var/msg, var/html = 0)
 		rep = "&#x44F;"
 	else
 		rep = "&#255;"
-	var/index = findtext(msg, "ˇ")
+	var/index = findtext(msg, "—è")
 	while(index)
 		msg = copytext(msg, 1, index) + rep + copytext(msg, index + 1)
-		index = findtext(msg, "ˇ")
+		index = findtext(msg, "—è")
 	return msg
 
 /proc/rhtml_encode(var/msg, var/html = 0)
@@ -723,7 +723,7 @@ proc/sanitize_russian(var/msg, var/html = 0)
 		rep = "&#x44F;"
 	else
 		rep = "&#255;"
-	var/list/c = text2list(msg, "ˇ")
+	var/list/c = text2list(msg, "—è")
 	if(c.len == 1)
 		c = text2list(msg, rep)
 		if(c.len == 1)
@@ -743,7 +743,7 @@ proc/sanitize_russian(var/msg, var/html = 0)
 		rep = "&#x44F;"
 	else
 		rep = "&#255;"
-	var/list/c = text2list(msg, "ˇ")
+	var/list/c = text2list(msg, "—è")
 	if(c.len == 1)
 		c = text2list(msg, "&#255;")
 		if(c.len == 1)

@@ -186,7 +186,7 @@
 					if(active_chat.host == tablet)
 						spamcheck = 1
 						var/lastname = active_chat.name
-						var/t = copytext(sanitize(input("Rename Chat", "Rename", null, null)  as text),1,MAX_MESSAGE_LEN)
+						var/t = copytext(sanitize_russian(input("Rename Chat", "Rename", null, null)  as text, html = 1),1,MAX_MESSAGE_LEN)
 						if(t)
 							active_chat.name = t
 							active_chat.renamed = 1
@@ -207,7 +207,7 @@
 						chat = active_chat
 					if(!chat.users.Find(tablet))
 						return
-					var/t = copytext(sanitize(input("Message", "Message", null, null)  as text),1,MAX_MESSAGE_LEN)
+					var/t = copytext(sanitize_russian(input("Message", "Message", null, null)  as text, html = 1),1,MAX_MESSAGE_LEN)
 					if(t)
 						chat.log += "[tablet.owner] ([tablet.ownjob]): [t]<br>"
 						chat.raw_log += "[tablet.owner] ([tablet.ownjob]): [t]<br>"
@@ -249,7 +249,7 @@
 						tablet.popup.close()
 						usr.unset_machine()
 					else
-						t = copytext(sanitize(t), 1, 20)
+						t = copytext(sanitize_russian(t, html = 1), 1, 20)
 						tablet.core.ttone = t
 
 		use_app()
