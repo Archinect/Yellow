@@ -29,16 +29,6 @@
 				/obj/item/weapon/gun/projectile/automatic/pistol/deagle
 				)
 
-/obj/effect/spawner/lootdrop/podparts
-	name = "pod parts"
-	lootdoubles = 0
-	loot = list(
-				/obj/item/pod_construction_part/parts/armor/light,
-				/obj/item/pod_construction_part/parts/circuits,
-				/obj/item/pod_construction_part/parts/control,
-				/obj/item/pod_construction_part/parts/covers
-				)
-
 /obj/effect/spawner/lootdrop/gambling
 	name = "gambling valuables spawner"
 	loot = list(
