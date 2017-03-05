@@ -1,4 +1,4 @@
-##/tg/station v1.0.1
+##/tg/white v0.9.9
 
 [![Build Status](https://travis-ci.org/tgstation/tgstation.png)](https://travis-ci.org/tgstation/tgstation)
 
@@ -6,7 +6,6 @@
 **Website:** http://www.tgstation13.org <BR>
 **Code:** https://github.com/tgstation/tgstation <BR>
 **Wiki** http://tgstation13.org/wiki/Main_Page <BR>
-**IRC:** irc://irc.rizon.net/coderbus or if you dont have an IRC client, you can click  [here](https://kiwiirc.com/client/irc.rizon.net:6667/?&theme=cli#coderbus).<BR>
 
 
 ##DOWNLOADING
