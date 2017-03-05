@@ -66,3 +66,4 @@
 		do_teleport(M, target, precision) ///You will appear adjacent to the beacon
 
 
+
