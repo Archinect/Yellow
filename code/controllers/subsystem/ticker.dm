@@ -49,6 +49,8 @@ var/datum/subsystem/ticker/ticker
 
 	var/maprotatechecked = 0
 
+	var/list/prioritized_jobs = list()
+
 	var/idle_reboot_at
 
 
