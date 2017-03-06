@@ -22,7 +22,6 @@
 			Use(var/atom/target, var/mob/user, var/flags = P_ATTACHMENT_PLAYSOUND)
 				if(!..(target, user, flags))
 					return 0
-
 				if(projectile)
 					var/gimbal = istype(attached_to.GetAttachmentOnHardpoint(P_HARDPOINT_SECONDARY_ATTACHMENT), /obj/item/weapon/pod_attachment/secondary/gimbal)
 
@@ -59,17 +58,17 @@
 					else
 						start_points = attached_to.GetDirectionalTurfsUnderPod(attached_to.dir)
 						targets = attached_to.GetDirectionalTurfs(attached_to.dir)
-
-					for(var/turf/T in start_points)
-						var/obj/item/projectile/P = new projectile(T)
-						var/index = start_points.Find(T)
+					var i = 1
+					for(var/turf/t in start_points)
+						var/obj/item/projectile/P = new projectile(t)
 						P.firer = attached_to.pilot
-						var/turf/target_turf = get_turf(targets[index])
-						P.original = targets[index]
-						P.current = start_points[index]
-						P.yo = target_turf.y - T.y
-						P.xo = target_turf.x - T.x
-						P.process()
+						var/turf/target_turf = get_turf(targets[i])
+						P.original = targets[i]
+						P.current = t
+						P.yo = target_turf.y - t.y
+						P.xo = target_turf.x - t.x
+						P.fire()
+						i++
 
 					var/list/additions[length(targets)]
 					for(var/atom/A in targets)
