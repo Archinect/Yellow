@@ -546,7 +546,7 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	whilst not as strong as the popular energy sword, it can be opened and closed \
 	with a flick of your wrist with relatively little noise."
 	item = /obj/item/weapon/melee/balisong
-	cost = 4
+	cost = 5
 
 /datum/uplink_item/stealthy_weapons/foampistol
 	name = "Toy Gun with Riot Darts"
@@ -1087,7 +1087,7 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	name = "Syndicate Fedora"
 	desc = "This Syndicate Fedora of micro-woven adamantium silk is sure to prove your style!"
 	item = /obj/item/clothing/head/det_hat/evil
-	cost = 3
+	cost = 11
 
 /datum/uplink_item/badass/balloon
 	name = "Syndicate Balloon"
