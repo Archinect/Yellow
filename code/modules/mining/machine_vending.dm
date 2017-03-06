@@ -163,7 +163,7 @@
 	switch(selection)
 		if("Survival Capsule and Survival Pen")
 			new /obj/item/weapon/survivalcapsule(src.loc)
-			new /obj/item/weapon/storage/firstaid/fire(src.loc)
+			new /obj/item/weapon/reagent_containers/hypospray/medipen/survival(loc)
 		if("Resonator and Advanced Scanner")
 			new /obj/item/weapon/resonator(src.loc)
 			new /obj/item/device/t_scanner/adv_mining_scanner(src.loc)
