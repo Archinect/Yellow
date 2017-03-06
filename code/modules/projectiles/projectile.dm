@@ -51,6 +51,8 @@
 	var/forcedodge = 0 //to pass through everything
 
 	var/bump_at_ttile = 0
+	var/bumped=0
+	var/obj/shot_from = null
 
 /obj/item/projectile/New()
 	permutated = list()
@@ -221,3 +223,45 @@
 /obj/item/projectile/proc/dumbfire(var/dir)
 	current = get_ranged_target_turf(src, dir, world.maxx)
 	fire()
+
+/obj/item/projectile/portalgun
+	name = "portal gun shot"
+	icon = 'icons/obj/projectiles_experimental.dmi'
+	icon_state = "portalgun"
+	damage = 0
+	nodamage = 1
+	var/setting = 0
+
+/obj/item/projectile/portalgun/bump_original_check()//so players can aim at floors
+	if(!bumped)
+		if(loc == get_turf(original))
+			if(!(original in permutated))
+				Bump(original)
+
+/obj/item/projectile/portalgun/Bump(atom/A as mob|obj|turf|area)
+	if(bumped)
+		return
+	bumped = 1
+
+	var/obj/item/weapon/gun/portalgun/P = shot_from
+
+	if(isliving(A))
+		forceMove(get_step(loc,dir))
+
+	if(!(locate(/obj/effect/portal) in loc))
+		P.open_portal(setting,loc,A)
+	bullet_die()
+
+/obj/item/projectile/proc/bump_original_check()
+	if(!bumped && !isturf(original))
+		if(loc == get_turf(original))
+			if(!(original in permutated))
+				Bump(original)
+				return 1//so laser beams visually stop when they hit their target
+	return 0
+
+/obj/item/projectile/proc/OnDeath()	//if assigned, allows for code when the projectile disappears
+
+/obj/item/projectile/proc/bullet_die()
+	spawn()
+		OnDeath()

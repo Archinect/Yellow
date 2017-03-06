@@ -211,7 +211,7 @@
 
 		t = "<font face=\"[CRAYON_FONT]\" color=[C.paint_color]><b>[t]</b></font>"
 
-//	t = replacetext(t, "#", "") // Junk converted to nothing!
+	t = sanitize_russian(t, html = 1) // Junk converted to nothing!
 
 //Count the fields
 	var/laststart = 1

@@ -14,7 +14,7 @@ Format:
 endmap
 
 map tgstation2
-	friendlyname Box Station
+	friendlyname Modified Box Station
 	default
 	#voteweight 1.5
 endmap
