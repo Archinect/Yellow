@@ -143,6 +143,11 @@ var/list/pod_list = list()
 		/*
 		* Equalize Air
 		*/
+		var/internal_temp_regulation = 1
+		if(internal_temp_regulation)
+			if(internal_air && internal_air.return_volume() > 0)
+				var/delta = internal_air.temperature - T20C
+				internal_air.temperature -= max(-10, min(10, round(delta/4,0.1)))
 
 		if(internal_canister)
 			var/datum/gas_mixture/tank_air = internal_canister.return_air()
@@ -285,7 +290,7 @@ var/list/pod_list = list()
 				H.text2tab("<span class='warning'>You are placed into \the [src] by [dragged_by.name].</span>")
 				dragged_by.text2tab("<span class='info'>You place [H.name] into \the [src].</span>")
 
-			H.loc = src
+			H.forceMove(src)
 			if(!as_passenger)
 				pilot = H
 				PrintSystemNotice("Systems initialized.")
@@ -381,8 +386,9 @@ var/list/pod_list = list()
 		else
 			if((last_move_time + move_cooldown) > world.time)
 				return 0
-
-			step(src, _dir)
+			world<<"HI"
+			step_towards(src, _dir)
+			//step(src, _dir)
 			UsePower(pod_config.movement_cost)
 			turn_direction = _dir
 			inertial_direction = _dir
@@ -605,3 +611,40 @@ var/list/pod_list = list()
 			user.client.debug_variables(pod_log)
 
 		OpenDebugMenu(user)
+
+
+	Adjacent(var/atom/neighbor)
+		if(neighbor in bounds(1))
+			return 1
+
+	return_air()
+		if(toggles & P_TOGGLE_ENVAIR)
+			return loc.return_air()
+		if(internal_air)
+			return internal_air
+		else	..()
+
+
+	remove_air(var/amt)
+		if(toggles & P_TOGGLE_ENVAIR)
+			var/datum/gas_mixture/env = loc.return_air()
+			return env.remove(amt)
+		if(internal_air)
+			return internal_air.remove(amt)
+		else return ..()
+
+	proc/return_temperature()
+		if(toggles & P_TOGGLE_ENVAIR)
+			var/datum/gas_mixture/env = loc.return_air()
+			return env.temperature
+		if(internal_air)
+			return internal_air.temperature
+		else return ..()
+
+	proc/return_pressure()
+		if(toggles & P_TOGGLE_ENVAIR)
+			var/datum/gas_mixture/env = loc.return_air()
+			return env.return_pressure()
+		if(internal_air)
+			return internal_air.return_pressure()
+		else return ..()
