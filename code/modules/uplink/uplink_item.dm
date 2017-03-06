@@ -540,6 +540,14 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	item = /obj/item/weapon/pen/edagger
 	cost = 2
 
+/datum/uplink_item/stealthy_weapons/balisong
+	name = "Butterfly Knife"
+	desc = "A razor sharp concealable knife used by martial artists ,\
+	whilst not as strong as the popular energy sword, it can be opened and closed \
+	with a flick of your wrist with relatively little noise."
+	item = /obj/item/weapon/melee/balisong
+	cost = 4
+
 /datum/uplink_item/stealthy_weapons/foampistol
 	name = "Toy Gun with Riot Darts"
 	desc = "An innocent-looking toy pistol designed to fire foam darts. Comes loaded with riot-grade \
