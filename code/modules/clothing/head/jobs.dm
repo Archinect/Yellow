@@ -83,7 +83,7 @@
 	icon_state = "syndicate_fedora"
 	desc = "A suspicious black fedora with a red band."
 	w_class = 4
-	throw_speed = 4
+	throw_speed = 3
 	embedded_pain_multiplier = 4
 	sharpness = IS_BLUNT
 	hitsound = 'sound/weapons/Genhit.ogg'
@@ -96,7 +96,7 @@
 	if(extended)
 		force = 15
 		throwforce = 20
-		embed_chance = 30
+		embed_chance = 1
 		sharpness = IS_SHARP
 		icon_state = "syndicate_fedora_sharp"
 		attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut", "tipped")
