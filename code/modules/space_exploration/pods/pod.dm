@@ -35,6 +35,7 @@ var/list/pod_list = list()
 	var/mob/living/carbon/human/pilot = 0
 
 	var/datum/effect_system/spark_spread/sparks
+	var/datum/effect_system/trail_follow/ion/pod/ion_trail
 
 	var/datum/pod_log/pod_log
 
@@ -64,6 +65,10 @@ var/list/pod_list = list()
 		sparks = new /datum/effect_system/spark_spread()
 		sparks.set_up(5, 0, src)
 		sparks.attach(src)
+
+		ion_trail = new
+		ion_trail.set_up(src)
+		ion_trail.start()
 
 		if(fexists("icons/obj/pod-[size[1]]-[size[2]].dmi"))
 			icon = file("icons/obj/pod-[size[1]]-[size[2]].dmi")
@@ -136,7 +141,9 @@ var/list/pod_list = list()
 			return 0
 
 		if(!HasTraction())
-			step(src, inertial_direction)
+			var/turf/movement_turf = GetDirectionalTurf(inertial_direction)
+			Move(movement_turf)
+
 			spawn(-1)
 				dir = turn_direction
 
@@ -245,7 +252,9 @@ var/list/pod_list = list()
 		H.text2tab("<span class='info'>You start leaving the [src]..<span>")
 		if(do_after(H, exit_delay))
 			H.text2tab("<span class='info'>You leave the [src].</span>")
-			H.loc = get_turf(src)
+			H.forceMove(get_turf(src))
+			if(H && H.client)
+				H.client.view = world.view
 			if(as_pilot)
 				pilot = 0
 
@@ -386,9 +395,8 @@ var/list/pod_list = list()
 		else
 			if((last_move_time + move_cooldown) > world.time)
 				return 0
-			world<<"HI"
-			step_towards(src, _dir)
-			//step(src, _dir)
+			var/turf/movement_turf = GetDirectionalTurf(_dir)
+			Move(movement_turf)
 			UsePower(pod_config.movement_cost)
 			turn_direction = _dir
 			inertial_direction = _dir
