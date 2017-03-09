@@ -83,7 +83,7 @@
 	icon_state = "syndicate_fedora"
 	desc = "A suspicious black fedora with a red band."
 	w_class = 4
-	throw_speed = 4
+	throw_speed = 3
 	embedded_pain_multiplier = 4
 	sharpness = IS_BLUNT
 	hitsound = 'sound/weapons/Genhit.ogg'
@@ -95,8 +95,8 @@
 	playsound(src.loc, 'sound/weapons/batonextend.ogg', 50, 1)
 	if(extended)
 		force = 15
-		throwforce = 40
-		embed_chance = 100
+		throwforce = 20
+		embed_chance = 1
 		sharpness = IS_SHARP
 		icon_state = "syndicate_fedora_sharp"
 		attack_verb = list("attacked", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut", "tipped")
@@ -110,6 +110,21 @@
 		attack_verb = list("poked", "tipped")
 		hitsound = 'sound/weapons/Genhit.ogg'
 
+/obj/item/clothing/head/det_hat/evil/throw_at(atom/target, range, speed, mob/thrower, spin=1)
+	if(extended)
+		if(iscarbon(thrower))
+			var/mob/living/carbon/C = thrower
+			C.throw_mode_on() //so they can catch it on the return.
+	return ..()
+
+/obj/item/clothing/head/det_hat/evil/throw_impact(atom/hit_atom)
+	if(extended)
+		var/temp = hit_atom.hitby(src, 0, 0)
+		if(thrownby && !temp)
+			spawn(1) //This protects from a bug that would make it hit the thrower twice on the return in some circumstances.
+				throw_at(thrownby, throw_range+2, throw_speed, null, 1)
+	else
+		return ..()
 
 //Mime
 /obj/item/clothing/head/beret

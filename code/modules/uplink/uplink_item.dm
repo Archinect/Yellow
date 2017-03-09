@@ -1087,7 +1087,7 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	name = "Syndicate Fedora"
 	desc = "This Syndicate Fedora of micro-woven adamantium silk is sure to prove your style!"
 	item = /obj/item/clothing/head/det_hat/evil
-	cost = 11
+	cost = 5
 
 /datum/uplink_item/badass/balloon
 	name = "Syndicate Balloon"
