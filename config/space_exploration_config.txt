@@ -30,6 +30,7 @@ drivable /turf/simulated/floor/plating
 drivable /turf/unsimulated/floor/engine
 drivable /turf/unsimulated/floor/plating
 drivable /turf/simulated/floor/airless
+drivable /turf/open/floor/plasteel/warningline
 
 #####################################
 
