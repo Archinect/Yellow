@@ -1771,6 +1771,7 @@
 #include "code\modules\space_exploration\pods\config.dm"
 #include "code\modules\space_exploration\pods\construction.dm"
 #include "code\modules\space_exploration\pods\damage.dm"
+#include "code\modules\space_exploration\pods\effects.dm"
 #include "code\modules\space_exploration\pods\helper.dm"
 #include "code\modules\space_exploration\pods\log.dm"
 #include "code\modules\space_exploration\pods\menu.dm"
