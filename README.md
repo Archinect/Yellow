@@ -3,9 +3,9 @@
 [![Build Status](https://travis-ci.org/tgstation/tgstation.png)](https://travis-ci.org/tgstation/tgstation)
 
 
-**Website:** http://www.tgstation13.org <BR>
-**Code:** https://github.com/tgstation/tgstation <BR>
-**Wiki** http://tgstation13.org/wiki/Main_Page <BR>
+**Website:** http://www.ss13.ru <BR>
+**Code:** https://github.com/joctopus/yellow <BR>
+**Wiki** http://wiki.ss13.ru <BR>
 
 
 ##DOWNLOADING
