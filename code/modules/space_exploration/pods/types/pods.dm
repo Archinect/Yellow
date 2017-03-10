@@ -113,7 +113,7 @@
 	move_cooldown = 1.8
 
 	GetSeats()
-		return 0
+		return 1
 
 	pre_equipped/
 
