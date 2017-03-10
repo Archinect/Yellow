@@ -24,9 +24,56 @@ paw_damage_upper 8
 handcuffed_exit_delay 1200
 
 
-drivable /turf/open/space
-drivable /turf/open/floor/engine
-drivable /turf/open/floor/plating
-drivable /turf/open/floor/engine
-drivable /turf/open/floor/plating
-drivable /turf/open/floor/airless
+drivable /turf/space
+drivable /turf/simulated/floor/engine
+drivable /turf/simulated/floor/plating
+drivable /turf/unsimulated/floor/engine
+drivable /turf/unsimulated/floor/plating
+drivable /turf/simulated/floor/airless
+
+#####################################
+
+[Mining]
+
+high_chance_create_mineral 25
+high_uranium_chance 35
+high_diamond_chance 10
+high_gold_chance 35
+high_silver_chance 35
+high_plasma_chance 35
+high_iron_chance 50
+	
+low_chance_create_mineral 5
+low_uranium_chance 1
+low_diamond_chance 1
+low_gold_chance 1
+low_silver_chance 1
+low_plasma_chance 1
+low_iron_chance 50
+low_gibtonite_chance 4
+
+#####################################
+
+[Template]
+
+place_amount_min 0
+place_amount_max 0
+
+zs 3
+zs 4
+zs 6
+
+# These objects will be placed last
+place_last /obj/machinery/power/apc
+place_last /obj/machinery/light_switch
+place_last /obj/machinery/disposal
+place_last /obj/machinery/atmospherics/unary/vent_pump
+place_last /obj/machinery/atmospherics/unary/vent_scrubber
+place_last /obj/machinery/disposalpipe/segment
+place_last /obj/effect/spawner/space/set_spawner/master
+place_last /obj/structure/lattice
+place_last /obj/structure/closet
+
+tries 10
+
+directory data/templates
