@@ -1,4 +1,4 @@
-##/tg/white v0.9.9
+##/tg/white v1.0.1
 
 [![Build Status](https://travis-ci.org/tgstation/tgstation.png)](https://travis-ci.org/tgstation/tgstation)
 
