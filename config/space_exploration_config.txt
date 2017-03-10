@@ -24,12 +24,12 @@ paw_damage_upper 8
 handcuffed_exit_delay 1200
 
 
-drivable /turf/space
-drivable /turf/simulated/floor/engine
-drivable /turf/simulated/floor/plating
-drivable /turf/unsimulated/floor/engine
-drivable /turf/unsimulated/floor/plating
-drivable /turf/simulated/floor/airless
+drivable /turf/open/space
+drivable /turf/open/floor/engine
+drivable /turf/open/floor/plating
+drivable /turf/open/floor/engine
+drivable /turf/open/floor/plating
+drivable /turf/open/floor/airless
 drivable /turf/open/floor/plasteel/warningline
 
 #####################################
