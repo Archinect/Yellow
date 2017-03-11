@@ -96,27 +96,27 @@ var/list/icons_to_ignore_at_floor_init = list("damaged1","damaged2","damaged3","
 	return 1
 
 /turf/open/floor/attack_hand(mob/user as mob)
-    if(!density)    //we are crawling
-        var/crawl_time = 5        //moving faster than crawling under
-        var/atom/U
-        for(U in src)
-            if(U.density)//there are dense something
-                return
-
-        var/togo                 //dir to crawlout
-        if(src.y == user.y + 1)
-            togo = NORTH
-        else if(src.y == user.y - 1)
-            togo = SOUTH
-        else if(src.x == user.x + 1)
-            togo = EAST
-        else if(src.x == user.x - 1)
-            togo = WEST
-        if(do_after(user, crawl_time*2, 1, null))
-            step(user, togo)
-        return
-    else
-        ..(user)
+	if(user.resting)
+		if(!density)    //we are crawling
+			var/crawl_time = 5        //moving faster than crawling under
+			var/atom/U
+			for(U in src)
+				if(U.density)//there are dense something
+					return
+			var/togo                 //dir to crawlout
+			if(src.y == user.y + 1)
+				togo = NORTH
+			else if(src.y == user.y - 1)
+				togo = SOUTH
+			else if(src.x == user.x + 1)
+				togo = EAST
+			else if(src.x == user.x - 1)
+				togo = WEST
+			if(do_after(user, crawl_time*2, 1, null))
+				step(user, togo)
+			return
+		else
+			..(user)
 
 /turf/open/floor/attack_paw(mob/user)
 	return src.attack_hand(user)
