@@ -28,7 +28,7 @@ var/list/preferences_datums = list()
 
 	var/UI_style = "Midnight"
 	var/hotkeys = FALSE
-	var/tgui_fancy = TRUE
+	var/tgui_fancy = "nofrills"
 	var/tgui_lock = TRUE
 	var/toggles = TOGGLES_DEFAULT
 	var/chat_toggles = TOGGLES_DEFAULT_CHAT
