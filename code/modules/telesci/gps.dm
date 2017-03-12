@@ -11,6 +11,15 @@ var/list/GPS_list = list()
 	var/emped = 0
 	var/turf/locked_location
 	var/tracking = TRUE
+	var/intelligent
+
+/obj/item/device/gps/examine(mob/user)
+	..()
+	if(intelligent)
+		user << "<span class='notice'>This GPS is upgraded with intelligent software. It will label other GPS's with a tag based on it's location from you.</span>"
+		user << "<span class='red'>The \[Adjacent\] tag means they are within 20 feet.</span>"
+		user << "<span class='blue'>The \[Close-By\] tag means they are within 40 feet.</span>"
+		user << "<span class='white'>The \[Away\] tag means they are anywhere farther than that.</span>"
 
 /obj/item/device/gps/New()
 	..()
@@ -70,7 +79,16 @@ var/list/GPS_list = list()
 			if(G.emped == 1)
 				t += "<BR>[tracked_gpstag]: ERROR"
 			else if(G.tracking)
-				t += "<BR>[tracked_gpstag]: [format_text(gps_area.name)] ([pos.x], [pos.y], [pos.z])"
+				var/code
+				if(intelligent)
+					if(get_dist(get_turf(user), pos) <= 20)
+						code = "\[Adjacent\]"
+					else if (get_dist(get_turf(user), pos) <= 40)
+						code = "\[Close-By\]"
+					else
+						code = "\[Away\]"
+					code += " | " // so we have room.
+				t += "<BR>[code][tracked_gpstag]: [format_text(gps_area.name)] ([pos.x], [pos.y], [pos.z])"
 			else
 				continue
 	var/datum/browser/popup = new(user, "GPS", name, 360, min(gps_window_height, 800))
@@ -100,6 +118,7 @@ var/list/GPS_list = list()
 	icon_state = "gps-m"
 	gpstag = "MINE0"
 	desc = "A positioning system helpful for rescuing trapped or injured miners, keeping one on you at all times while mining might just save your life."
+	intelligent = TRUE
 
 /obj/item/device/gps/cyborg
 	icon_state = "gps-b"

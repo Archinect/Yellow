@@ -247,6 +247,12 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	item = /obj/item/weapon/grenade/syndieminibomb
 	cost = 6
 
+/datum/uplink_item/dangerous/syndifire
+	name = "Syndifire"
+	desc = "That smell that you love in the morning."
+	item = /obj/item/weapon/extinguisher/syndifire
+	cost = 10
+
 /datum/uplink_item/dangerous/foamsmg
 	name = "Toy Submachine Gun"
 	desc = "A fully-loaded Donksoft bullpup submachine gun that fires riot grade rounds with a 20-round magazine."
@@ -533,6 +539,14 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	desc = "A dagger made of energy that looks and functions as a pen when off."
 	item = /obj/item/weapon/pen/edagger
 	cost = 2
+
+/datum/uplink_item/stealthy_weapons/balisong
+	name = "Butterfly Knife"
+	desc = "A razor sharp concealable knife used by martial artists ,\
+	whilst not as strong as the popular energy sword, it can be opened and closed \
+	with a flick of your wrist with relatively little noise."
+	item = /obj/item/weapon/melee/balisong
+	cost = 5
 
 /datum/uplink_item/stealthy_weapons/foampistol
 	name = "Toy Gun with Riot Darts"
@@ -1068,6 +1082,12 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	desc = "Strong flavor, dense smoke, infused with omnizine."
 	item = /obj/item/weapon/storage/fancy/cigarettes/cigpack_syndicate
 	cost = 2
+
+/datum/uplink_item/badass/syndiefedora
+	name = "Syndicate Fedora"
+	desc = "This Syndicate Fedora of micro-woven adamantium silk is sure to prove your style!"
+	item = /obj/item/clothing/head/det_hat/evil
+	cost = 5
 
 /datum/uplink_item/badass/balloon
 	name = "Syndicate Balloon"

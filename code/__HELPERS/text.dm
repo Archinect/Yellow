@@ -14,9 +14,15 @@
  */
 
 // Run all strings to be used in an SQL query through this proc first to properly escape out injection attempts.
+// Run all strings to be used in an SQL query through this proc first to properly escape out injection attempts.
 /proc/sanitizeSQL(t as text)
 	var/sqltext = dbcon.Quote(t);
 	return copytext(sqltext, 2, lentext(sqltext));//Quote() adds quotes around input, we already do that
+
+/proc/sanitizeSQL_a0(t as text)
+	t = replacetext(t, "ÿ", "&#1103;")
+	var/sqltext = dbcon.Quote(t);
+	return copytext(sqltext, 2, lentext(sqltext)); //Quote() adds quotes around input, we already do that and fix "ÿ"
 
 /proc/format_table_name(table as text)
 	return sqlfdbktableprefix + table
@@ -37,27 +43,22 @@
 	return t
 
 //Removes a few problematic characters
-/proc/sanitize_simple(t,list/repl_chars = list("\n"="#","\t"="#"))
-	for(var/char in repl_chars)
-		var/index = findtext(t, char)
-		while(index)
-			t = copytext(t, 1, index) + repl_chars[char] + copytext(t, index+1)
-			index = findtext(t, char, index+1)
-	return t
 
 //Runs byond's sanitization proc along-side sanitize_simple
-/proc/sanitize(t,list/repl_chars = null)
-	return html_encode(sanitize_simple(t,repl_chars))
+/proc/sanitize(t,list/repl_chars = null,var/html)
+	t = rhtml_encode(trim(sanitize_simple(t, repl_chars)),html)
+	t = replacetext(t, "____255_", "&#255;")//cp1251
+	return t
 
 //Runs sanitize and strip_html_simple
-//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' after sanitize() calls byond's html_encode()
+//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' after sanitize() calls byond's rhtml_encode()
 /proc/strip_html(t,limit=MAX_MESSAGE_LEN)
 	return copytext((sanitize(strip_html_simple(t))),1,limit)
 
 //Runs byond's sanitization proc along-side strip_html_simple
-//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' that html_encode() would cause
+//I believe strip_html_simple() is required to run first to prevent '<' from displaying as '&lt;' that rhtml_encode() would cause
 /proc/adminscrub(t,limit=MAX_MESSAGE_LEN)
-	return copytext((html_encode(strip_html_simple(t))),1,limit)
+	return copytext((rhtml_encode(strip_html_simple(t))),1,limit)
 
 
 //Returns null if there is any bad text in the string
@@ -83,12 +84,18 @@
 // Used to get a properly sanitized input, of max_length
 /proc/stripped_input(mob/user, message = "", title = "", default = "", max_length=MAX_MESSAGE_LEN)
 	var/name = input(user, message, title, default) as text|null
-	return trim(html_encode(name), max_length) //trim is "outside" because html_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
+	name = replacetext(name, "ÿ", "___255_")
+	name = trim(rhtml_encode(name), max_length) //trim is "outside" because rhtml_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
+	name = replacetext(name, "___255_", "ÿ")
+	return name
 
 // Used to get a properly sanitized multiline input, of max_length
 /proc/stripped_multiline_input(mob/user, message = "", title = "", default = "", max_length=MAX_MESSAGE_LEN)
 	var/name = input(user, message, title, default) as message|null
-	return html_encode(trim(name, max_length))
+	name = replacetext(name, "ÿ", "___255_")
+	name = rhtml_encode(trim(name, max_length)) //trim is "inside" because rhtml_encode can expand single symbols into multiple symbols (such as turning < into &lt;)
+	name = replacetext(name, "___255_", "ÿ")
+	return name
 
 //Filters out undesirable characters from names
 /proc/reject_bad_name(t_in, allow_numbers=0, max_length=MAX_NAME_LEN)
@@ -164,7 +171,7 @@
 
 	return t_out
 
-//html_encode helper proc that returns the smallest non null of two numbers
+//rhtml_encode helper proc that returns the smallest non null of two numbers
 //or 0 if they're both null (needed because of findtext returning 0 when a value is not present)
 /proc/non_zero_min(a, b)
 	if(!a)
@@ -244,6 +251,31 @@
 	if(max_length)
 		text = copytext(text, 1, max_length)
 	return trim_left(trim_right(text))
+
+/proc/ruppertext(t as text)
+	t = uppertext(t)
+	. = ""
+	for(var/i in 1 to length(t))
+		var/a = text2ascii(t, i)
+		if (a > 223)
+			. += ascii2text(a - 32)
+		else if (a == 184)
+			. += ascii2text(168)
+		else
+			. += ascii2text(a)
+	. = replacetext(.,"&#255;","ß")
+
+/proc/rlowertext(t as text)
+	t = lowertext(t)
+	. = ""
+	for(var/i in 1 to length(t))
+		var/a = text2ascii(t, i)
+		if (a > 191 && a < 224)
+			. += ascii2text(a + 32)
+		else if (a == 168)
+			. += ascii2text(184)
+		else
+			. += ascii2text(a)
 
 //Returns a string with the first element of the string capitalized.
 /proc/capitalize(t as text)
@@ -418,6 +450,7 @@ var/list/binary = list("0","1")
 	t = replacetext(t, "\[/small\]", "</font>")
 	t = replacetext(t, "\[list\]", "<ul>")
 	t = replacetext(t, "\[/list\]", "</ul>")
+	t = replacetext(t, "ÿ", "&#1103;")
 
 	return t
 
@@ -425,3 +458,302 @@ var/list/binary = list("0","1")
 	. = list()
 	for(var/x in 1 to length(t))
 		. += copytext(t,x,x+1)
+
+//convertion cp1251 to unicode
+/proc/sanitize_o(t,list/repl_chars = null)
+	t = rhtml_encode(trim(sanitize_simple_o(t, repl_chars)))
+	return t
+
+/proc/sanitize_simple_o(t,list/repl_chars = list("\n"="#","\t"="#"))
+	for(var/char in repl_chars)
+		var/index = findtext(t, char)
+		while(index)
+			t = copytext(t, 1, index) + repl_chars[char] + copytext(t, index+1)
+			index = findtext(t, char, index+1)
+	return t
+
+//unicode sanitization
+/proc/sanitize_u(t,list/repl_chars = null)
+	t = rhtml_encode(sanitize_simple(t,repl_chars))
+	t = replacetext(t, "____255_", "&#1103;")
+	return t
+
+//convertion cp1251 to unicode
+/proc/sanitize_a2u(t)
+	t = replacetext(t, "&#255;", "&#1103;")
+	return t
+
+//convertion unicode to cp1251
+/proc/sanitize_u2a(t)
+	t = replacetext(t, "&#1103;", "&#255;")
+	return t
+
+//clean sanitize cp1251
+/proc/sanitize_a0(t)
+	t = replacetext(t, "ÿ", "&#255;")
+	return t
+
+//clean sanitize unicode
+/proc/sanitize_u0(t)
+	t = replacetext(t, "ÿ", "&#1103;")
+	return t
+
+/proc/remore_cyrillic(t)
+	var/list/symbols = list("à", "á", "â", "ã", "ä", "å", "¸", "æ", "ç", "è", "é", "ê", "ë", "ì", \
+	"í", "î", "ï", "ð", "ñ", "ò", "ó", "ô", "õ", "ö", "÷", "ø", "ù", "ü", "û", "ú", "ý", "þ", "ÿ", \
+	"À", "Á", "Â", "Ã", "Ä", "Å", "¨", "Æ", "Ç", "È", "É", "Ê", "Ë", "Ì", "Í", "Î", "Ï", \
+	"Ð", "Ñ", "Ò", "Ó", "Ô", "Õ", "Ö", "×", "Ø", "Ù", "Ü", "Û", "Ú", "Ý", "Þ", "ß")
+	for(var/i in symbols)
+		t = replacetext(t, i, "")
+	return t
+
+/proc/extA2U(t)
+	//¨, ¸
+	t = replacetextEx(t, "\\xa8", "\\u0401")
+	t = replacetextEx(t, "\\xb8", "\\u0451")
+	//À-Ï
+	t = replacetextEx(t, "\\xc0", "\\u0410")
+	t = replacetextEx(t, "\\xc1", "\\u0411")
+	t = replacetextEx(t, "\\xc2", "\\u0412")
+	t = replacetextEx(t, "\\xc3", "\\u0413")
+	t = replacetextEx(t, "\\xc4", "\\u0414")
+	t = replacetextEx(t, "\\xc5", "\\u0415")
+	t = replacetextEx(t, "\\xc6", "\\u0416")
+	t = replacetextEx(t, "\\xc7", "\\u0417")
+	t = replacetextEx(t, "\\xc8", "\\u0418")
+	t = replacetextEx(t, "\\xc9", "\\u0419")
+	t = replacetextEx(t, "\\xca", "\\u041a")
+	t = replacetextEx(t, "\\xcb", "\\u041b")
+	t = replacetextEx(t, "\\xcc", "\\u041c")
+	t = replacetextEx(t, "\\xcd", "\\u041d")
+	t = replacetextEx(t, "\\xce", "\\u041e")
+	t = replacetextEx(t, "\\xcf", "\\u041f")
+	//Ð-ß
+	t = replacetextEx(t, "\\xd0", "\\u0420")
+	t = replacetextEx(t, "\\xd1", "\\u0421")
+	t = replacetextEx(t, "\\xd2", "\\u0422")
+	t = replacetextEx(t, "\\xd3", "\\u0423")
+	t = replacetextEx(t, "\\xd4", "\\u0424")
+	t = replacetextEx(t, "\\xd5", "\\u0425")
+	t = replacetextEx(t, "\\xd6", "\\u0426")
+	t = replacetextEx(t, "\\xd7", "\\u0427")
+	t = replacetextEx(t, "\\xd8", "\\u0428")
+	t = replacetextEx(t, "\\xd9", "\\u0429")
+	t = replacetextEx(t, "\\xda", "\\u042a")
+	t = replacetextEx(t, "\\xdb", "\\u042b")
+	t = replacetextEx(t, "\\xdc", "\\u042c")
+	t = replacetextEx(t, "\\xdd", "\\u042d")
+	t = replacetextEx(t, "\\xde", "\\u042e")
+	t = replacetextEx(t, "\\xdf", "\\u042f")
+	//à-ï
+	t = replacetextEx(t, "\\xe0", "\\u0430")
+	t = replacetextEx(t, "\\xe1", "\\u0431")
+	t = replacetextEx(t, "\\xe2", "\\u0432")
+	t = replacetextEx(t, "\\xe3", "\\u0433")
+	t = replacetextEx(t, "\\xe4", "\\u0434")
+	t = replacetextEx(t, "\\xe5", "\\u0435")
+	t = replacetextEx(t, "\\xe6", "\\u0436")
+	t = replacetextEx(t, "\\xe7", "\\u0437")
+	t = replacetextEx(t, "\\xe8", "\\u0438")
+	t = replacetextEx(t, "\\xe9", "\\u0439")
+	t = replacetextEx(t, "\\xea", "\\u043a")
+	t = replacetextEx(t, "\\xeb", "\\u043b")
+	t = replacetextEx(t, "\\xec", "\\u043c")
+	t = replacetextEx(t, "\\xed", "\\u043d")
+	t = replacetextEx(t, "\\xee", "\\u043e")
+	t = replacetextEx(t, "\\xef", "\\u043f")
+	//ð-ÿ
+	t = replacetextEx(t, "\\xf0", "\\u0440")
+	t = replacetextEx(t, "\\xf1", "\\u0441")
+	t = replacetextEx(t, "\\xf2", "\\u0442")
+	t = replacetextEx(t, "\\xf3", "\\u0443")
+	t = replacetextEx(t, "\\xf4", "\\u0444")
+	t = replacetextEx(t, "\\xf5", "\\u0445")
+	t = replacetextEx(t, "\\xf6", "\\u0446")
+	t = replacetextEx(t, "\\xf7", "\\u0447")
+	t = replacetextEx(t, "\\xf8", "\\u0448")
+	t = replacetextEx(t, "\\xf9", "\\u0449")
+	t = replacetextEx(t, "\\xfa", "\\u044a")
+	t = replacetextEx(t, "\\xfb", "\\u044b")
+	t = replacetextEx(t, "\\xfc", "\\u044c")
+	t = replacetextEx(t, "\\xfd", "\\u044d")
+	t = replacetextEx(t, "\\xfe", "\\u044e")
+	t = replacetextEx(t, "&#255;", "\\u044f")
+	t = replacetextEx(t, "&#1103;", "\\u044f")
+	return t
+
+#define string2charlist(string) (splittext(string, regex("(.)")) - splittext(string, ""))
+/proc/rot13(text = "")
+	var/list/textlist = string2charlist(text)
+	var/list/result = list()
+	for(var/c in textlist)
+		var/ca = text2ascii(c)
+		if(ca >= text2ascii("a") && ca <= text2ascii("m"))
+			ca += 13
+		else if(ca >= text2ascii("n") && ca <= text2ascii("z"))
+			ca -= 13
+		else if(ca >= text2ascii("A") && ca <= text2ascii("M"))
+			ca += 13
+		else if(ca >= text2ascii("N") && ca <= text2ascii("Z"))
+			ca -= 13
+		result += ascii2text(ca)
+	return jointext(result, "")
+
+//Takes a list of values, sanitizes it down for readability and character count,
+//then exports it as a json file at data/npc_saves/[filename].json.
+//As far as SS13 is concerned this is write only data. You can't change something
+//in the json file and have it be reflected in the in game item/mob it came from.
+//(That's what things like savefiles are for) Note that this list is not shuffled.
+/proc/twitterize(list/proposed, filename, cullshort = 1, storemax = 1000)
+	if(!islist(proposed) || !filename || !config.log_twitter)
+		return
+
+	//Regular expressions are, as usual, absolute magic
+	var/regex/is_website = new("http|www.|\[a-z0-9_-]+.(com|org|net|mil|edu)+", "i")
+	var/regex/is_email = new("\[a-z0-9_-]+@\[a-z0-9_-]+.\[a-z0-9_-]+", "i")
+	var/regex/alphanumeric = new("\[a-z0-9]+", "i")
+	var/regex/punctuation = new("\[.!?]+", "i")
+	var/regex/all_invalid_symbols = new("\[^ -~]+")
+
+	var/list/accepted = list()
+	for(var/string in proposed)
+		if(findtext(string,is_website) || findtext(string,is_email) || findtext(string,all_invalid_symbols) || !findtext(string,alphanumeric))
+			continue
+		var/buffer = ""
+		var/early_culling = TRUE
+		for(var/pos = 1, pos <= lentext(string), pos++)
+			var/let = copytext(string, pos, (pos + 1) % lentext(string))
+			if(early_culling && !findtext(let,alphanumeric))
+				continue
+			early_culling = FALSE
+			buffer += let
+		if(!findtext(buffer,alphanumeric))
+			continue
+		var/punctbuffer = ""
+		var/cutoff = lentext(buffer)
+		for(var/pos = lentext(buffer), pos >= 0, pos--)
+			var/let = copytext(buffer, pos, (pos + 1) % lentext(buffer))
+			if(findtext(let,alphanumeric))
+				break
+			if(findtext(let,punctuation))
+				punctbuffer = let + punctbuffer //Note this isn't the same thing as using +=
+				cutoff = pos
+		if(punctbuffer) //We clip down excessive punctuation to get the letter count lower and reduce repeats. It's not perfect but it helps.
+			var/exclaim = FALSE
+			var/question = FALSE
+			var/periods = 0
+			for(var/pos = lentext(punctbuffer), pos >= 0, pos--)
+				var/punct = copytext(punctbuffer, pos, (pos + 1) % lentext(punctbuffer))
+				if(!exclaim && findtext(punct,"!"))
+					exclaim = TRUE
+				if(!question && findtext(punct,"?"))
+					question = TRUE
+				if(!exclaim && !question && findtext(punct,"."))
+					periods += 1
+			if(exclaim)
+				if(question)
+					punctbuffer = "?!"
+				else
+					punctbuffer = "!"
+			else if(question)
+				punctbuffer = "?"
+			else if(periods)
+				if(periods > 1)
+					punctbuffer = "..."
+				else
+					punctbuffer = "" //Grammer nazis be damned
+			buffer = copytext(buffer, 1, cutoff) + punctbuffer
+		if(!findtext(buffer,alphanumeric))
+			continue
+		if(!buffer || lentext(buffer) > 140 || lentext(buffer) <= cullshort || buffer in accepted)
+			continue
+
+		accepted += buffer
+
+	var/log = file("data/npc_saves/[filename].json") //If this line ever shows up as changed in a PR be very careful you aren't being memed on
+	var/list/oldjson = list()
+	var/list/oldentries = list()
+	if(fexists(log))
+		oldjson = json_decode(file2text(log))
+		oldentries = oldjson["data"]
+	if(!isemptylist(oldentries))
+		for(var/string in accepted)
+			for(var/old in oldentries)
+				if(string == old)
+					oldentries.Remove(old) //Line's position in line is "refreshed" until it falls off the in game radar
+					break
+
+	var/list/finalized = list()
+	finalized = accepted.Copy() + oldentries.Copy() //we keep old and unreferenced phrases near the bottom for culling
+	listclearnulls(finalized)
+	if(!isemptylist(finalized) && length(finalized) > storemax)
+		finalized.Cut(storemax + 1)
+	fdel(log)
+
+	var/list/tosend = list()
+	tosend["data"] = finalized
+	log << json_encode(tosend)
+
+
+
+
+/proc/sanitize_simple(var/t,var/list/repl_chars = list("ÿ"="&#255;", "\n"="#","\t"="#"))
+	for(var/char in repl_chars)
+		var/index = findtext(t, char)
+		while(index)
+			t = copytext(t, 1, index) + repl_chars[char] + copytext(t, index+1)
+			index = findtext(t, char)
+	return t
+
+proc/sanitize_russian(var/msg, var/html = 0)
+	var/rep
+	if(html)
+		rep = "&#x44F;"
+	else
+		rep = "&#255;"
+	var/index = findtext(msg, "ÿ")
+	while(index)
+		msg = copytext(msg, 1, index) + rep + copytext(msg, index + 1)
+		index = findtext(msg, "ÿ")
+	return msg
+
+/proc/rhtml_encode(var/msg, var/html = 0)
+	var/rep
+	if(html)
+		rep = "&#x44F;"
+	else
+		rep = "&#255;"
+	var/list/c = text2list(msg, "ÿ")
+	if(c.len == 1)
+		c = text2list(msg, rep)
+		if(c.len == 1)
+			return html_encode(msg)
+	var/out = ""
+	var/first = 1
+	for(var/text in c)
+		if(!first)
+			out += rep
+		first = 0
+		out += html_encode(text)
+	return out
+
+/proc/rhtml_decode(var/msg, var/html = 0)
+	var/rep
+	if(html)
+		rep = "&#x44F;"
+	else
+		rep = "&#255;"
+	var/list/c = text2list(msg, "ÿ")
+	if(c.len == 1)
+		c = text2list(msg, "&#255;")
+		if(c.len == 1)
+			c = text2list(msg, "&#x4FF")
+			if(c.len == 1)
+				return html_decode(msg)
+	var/out = ""
+	var/first = 1
+	for(var/text in c)
+		if(!first)
+			out += rep
+		first = 0
+		out += html_decode(text)

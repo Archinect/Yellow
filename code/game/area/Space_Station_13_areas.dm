@@ -830,6 +830,9 @@ var/list/teleportlocs = list()
 	name = "Brig Control"
 	icon_state = "Warden"
 
+/area/security/range
+	name = "Range"
+	icon_state = "armory"
 /area/security/armory
 	name = "Armory"
 	icon_state = "armory"

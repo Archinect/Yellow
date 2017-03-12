@@ -120,6 +120,9 @@ macro "default"
 		name = "F3"
 		command = "say"
 	elem 
+		name = "F4"
+		command = "Me"
+	elem 
 		name = "F5"
 		command = "asay"
 	elem 

@@ -1,7 +1,7 @@
 	////////////
 	//SECURITY//
 	////////////
-#define UPLOAD_LIMIT		1048576	//Restricts client uploads to the server to 1MB //Could probably do with being lower.
+#define UPLOAD_LIMIT		5242880	//Restricts client uploads to the server to 5MB //Could probably do with being lower.
 
 	/*
 	When somebody clicks a link in game, this Topic is called first.
@@ -150,6 +150,8 @@ var/next_external_rsc = 0
 		preferences_datums[ckey] = prefs
 	prefs.last_ip = address				//these are gonna be used for banning
 	prefs.last_id = computer_id			//these are gonna be used for banning
+	if(world.byond_version >= 511 && byond_version >= 511 && prefs.clientfps)
+		vars["fps"] = prefs.clientfps
 
 	. = ..()	//calls mob.Login()
 

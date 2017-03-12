@@ -32,6 +32,7 @@
 	var/log_attack = 0					// log attack messages
 	var/log_adminchat = 0				// log admin chat messages
 	var/log_pda = 0						// log pda messages
+	var/log_twitter = 0					// log certain expliotable parrots and other such fun things in a JSON file of twitter valid phrases.
 	var/log_hrefs = 0					// log all links clicked in-game. Could be used for debugging and tracking down exploits
 	var/log_world_topic = 0				// log all world.Topic() calls
 	var/sql_enabled = 0					// for sql switching
@@ -301,6 +302,8 @@
 					config.log_emote = 1
 				if("log_adminchat")
 					config.log_adminchat = 1
+				if("log_twitter")
+					config.log_twitter = 1
 				if("log_pda")
 					config.log_pda = 1
 				if("log_hrefs")

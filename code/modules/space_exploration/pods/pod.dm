@@ -22,7 +22,7 @@ var/list/pod_list = list()
 	var/list/locks = list() // DNA (unique_enzymes) or code lock.
 	var/lumens = 6
 	var/toggles = 0
-	var/seats = 0 // Amount of additional people that can fit into the pod (excludes pilot)
+	var/seats = 1 // Amount of people, who can fit into pod (includes pilot)
 	var/being_repaired = 0
 	var/emagged = 0
 	var/last_fire_tick = 0
@@ -35,6 +35,7 @@ var/list/pod_list = list()
 	var/mob/living/carbon/human/pilot = 0
 
 	var/datum/effect_system/spark_spread/sparks
+	var/datum/effect_system/trail_follow/ion/pod/ion_trail
 
 	var/datum/pod_log/pod_log
 
@@ -64,6 +65,10 @@ var/list/pod_list = list()
 		sparks = new /datum/effect_system/spark_spread()
 		sparks.set_up(5, 0, src)
 		sparks.attach(src)
+
+		ion_trail = new
+		ion_trail.set_up(src)
+		ion_trail.start()
 
 		if(fexists("icons/obj/pod-[size[1]]-[size[2]].dmi"))
 			icon = file("icons/obj/pod-[size[1]]-[size[2]].dmi")
@@ -136,13 +141,20 @@ var/list/pod_list = list()
 			return 0
 
 		if(!HasTraction())
-			step(src, inertial_direction)
+			var/turf/movement_turf = GetDirectionalTurf(inertial_direction)
+			Move(movement_turf)
+
 			spawn(-1)
 				dir = turn_direction
 
 		/*
 		* Equalize Air
 		*/
+		var/internal_temp_regulation = 1
+		if(internal_temp_regulation)
+			if(internal_air && internal_air.return_volume() > 0)
+				var/delta = internal_air.temperature - T20C
+				internal_air.temperature -= max(-10, min(10, round(delta/4,0.1)))
 
 		if(internal_canister)
 			var/datum/gas_mixture/tank_air = internal_canister.return_air()
@@ -240,7 +252,9 @@ var/list/pod_list = list()
 		H.text2tab("<span class='info'>You start leaving the [src]..<span>")
 		if(do_after(H, exit_delay))
 			H.text2tab("<span class='info'>You leave the [src].</span>")
-			H.loc = get_turf(src)
+			H.forceMove(get_turf(src))
+			if(H && H.client)
+				H.client.view = world.view
 			if(as_pilot)
 				pilot = 0
 
@@ -285,7 +299,7 @@ var/list/pod_list = list()
 				H.text2tab("<span class='warning'>You are placed into \the [src] by [dragged_by.name].</span>")
 				dragged_by.text2tab("<span class='info'>You place [H.name] into \the [src].</span>")
 
-			H.loc = src
+			H.forceMove(src)
 			if(!as_passenger)
 				pilot = H
 				PrintSystemNotice("Systems initialized.")
@@ -381,8 +395,8 @@ var/list/pod_list = list()
 		else
 			if((last_move_time + move_cooldown) > world.time)
 				return 0
-
-			step(src, _dir)
+			var/turf/movement_turf = GetDirectionalTurf(_dir)
+			Move(movement_turf)
 			UsePower(pod_config.movement_cost)
 			turn_direction = _dir
 			inertial_direction = _dir
@@ -605,3 +619,40 @@ var/list/pod_list = list()
 			user.client.debug_variables(pod_log)
 
 		OpenDebugMenu(user)
+
+
+	Adjacent(var/atom/neighbor)
+		if(neighbor in bounds(1))
+			return 1
+
+	return_air()
+		if(toggles & P_TOGGLE_ENVAIR)
+			return loc.return_air()
+		if(internal_air)
+			return internal_air
+		else	..()
+
+
+	remove_air(var/amt)
+		if(toggles & P_TOGGLE_ENVAIR)
+			var/datum/gas_mixture/env = loc.return_air()
+			return env.remove(amt)
+		if(internal_air)
+			return internal_air.remove(amt)
+		else return ..()
+
+	proc/return_temperature()
+		if(toggles & P_TOGGLE_ENVAIR)
+			var/datum/gas_mixture/env = loc.return_air()
+			return env.temperature
+		if(internal_air)
+			return internal_air.temperature
+		else return ..()
+
+	proc/return_pressure()
+		if(toggles & P_TOGGLE_ENVAIR)
+			var/datum/gas_mixture/env = loc.return_air()
+			return env.return_pressure()
+		if(internal_air)
+			return internal_air.return_pressure()
+		else return ..()

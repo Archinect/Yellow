@@ -19,6 +19,7 @@ var/time_last_changed_position = 0
 	var/list/region_access = null
 	var/list/head_subordinates = null
 	var/target_dept = 0 //Which department this computer has access to. 0=all departments
+	var/prioritycount = 0 // we don't want 500 prioritized jobs
 
 	//Cooldown for closing positions in seconds
 	//if set to -1: No cooldown... probably a bad idea
@@ -116,12 +117,12 @@ var/time_last_changed_position = 0
 		dat += " || Confirm Identity: "
 		var/S
 		if(scan)
-			S = html_encode(scan.name)
+			S = rhtml_encode(scan.name)
 		else
 			S = "--------"
 		dat += "<a href='?src=\ref[src];choice=scan'>[S]</a>"
 		dat += "<table>"
-		dat += "<tr><td style='width:25%'><b>Job</b></td><td style='width:25%'><b>Slots</b></td><td style='width:25%'><b>Open job</b></td><td style='width:25%'><b>Close job</b></td></tr>"
+		dat += "<tr><td style='width:25%'><b>Job</b></td><td style='width:25%'><b>Slots</b></td><td style='width:25%'><b>Open job</b></td><td style='width:25%'><b>Close job</b><td style='width:25%'><b>Prioritize</b></td></td></tr>"
 		var/ID
 		if(scan && (access_change_ids in scan.access) && !target_dept)
 			ID = 1
@@ -165,6 +166,21 @@ var/time_last_changed_position = 0
 					dat += "Cooldown ongoing: [mins]:[(seconds < 10) ? "0[seconds]" : "[seconds]"]"
 				if(0)
 					dat += "Denied"
+			dat += "</td><td>"
+			switch(job.total_positions)
+				if(0)
+					dat += "Denied"
+				else
+					if(ID)
+						if(job in ticker.prioritized_jobs)
+							dat += "<a href='?src=\ref[src];choice=prioritize_job;job=[job.title]'>Deprioritize</a>"
+						else
+							if(prioritycount < 5)
+								dat += "<a href='?src=\ref[src];choice=prioritize_job;job=[job.title]'>Prioritize</a>"
+							else
+								dat += "Denied"
+					else
+						dat += "Prioritize"
 			dat += "</td></tr>"
 		dat += "</table>"
 	else
@@ -174,21 +190,21 @@ var/time_last_changed_position = 0
 		var/target_owner
 		var/target_rank
 		if(modify)
-			target_name = html_encode(modify.name)
+			target_name = rhtml_encode(modify.name)
 		else
 			target_name = "--------"
 		if(modify && modify.registered_name)
-			target_owner = html_encode(modify.registered_name)
+			target_owner = rhtml_encode(modify.registered_name)
 		else
 			target_owner = "--------"
 		if(modify && modify.assignment)
-			target_rank = html_encode(modify.assignment)
+			target_rank = rhtml_encode(modify.assignment)
 		else
 			target_rank = "Unassigned"
 
 		var/scan_name
 		if(scan)
-			scan_name = html_encode(scan.name)
+			scan_name = rhtml_encode(scan.name)
 		else
 			scan_name = "--------"
 
@@ -200,7 +216,7 @@ var/time_last_changed_position = 0
 			header += "<div align='center'><br>"
 			header += "<a href='?src=\ref[src];choice=modify'>Remove [target_name]</a> || "
 			header += "<a href='?src=\ref[src];choice=scan'>Remove [scan_name]</a> <br> "
-			header += "<a href='?src=\ref[src];choice=mode;mode_target=1'>Access Crew Manifest</a> || "
+			header += "<a href='?src=\ref[src];choice=mode;mode_target=1'>Access Crew Manifest</a> <br> "
 			header += "<a href='?src=\ref[src];choice=logout'>Log Out</a></div>"
 
 		header += "<hr>"
@@ -459,6 +475,23 @@ var/time_last_changed_position = 0
 					time_last_changed_position = world.time / 10
 				j.total_positions--
 				opened_positions[edit_job_target]--
+
+		if ("prioritize_job")
+			// TOGGLE WHETHER JOB APPEARS AS PRIORITIZED IN THE LOBBY
+			if(scan && (access_change_ids in scan.access) && !target_dept)
+				var/priority_target = href_list["job"]
+				var/datum/job/j = SSjob.GetJob(priority_target)
+				if(!j)
+					return 0
+				var/priority = TRUE
+				if(j in ticker.prioritized_jobs)
+					ticker.prioritized_jobs -= j
+					prioritycount--
+					priority = FALSE
+				else
+					ticker.prioritized_jobs += j
+					prioritycount++
+				usr << "<span class='notice'>[j.title] has been successfully [priority ?  "prioritized" : "unprioritized"]. Potential employees will notice your request.</span>"
 
 		if ("print")
 			if (!( printing ))

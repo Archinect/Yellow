@@ -46,6 +46,7 @@
 	new /obj/item/clothing/glasses/meson(src)
 	new /obj/item/weapon/survivalcapsule(src)
 	new /obj/item/stack/sheet/mineral/sandbags(src, 5)
+	new /obj/item/device/gps/mining(src)
 
 
 /**********************Shuttle Computer**************************/
@@ -57,6 +58,7 @@
 	shuttleId = "mining"
 	possible_destinations = "mining_home;mining_away"
 	no_destination_swap = 1
+	notification = SUPP_FREQ
 
 /*********************Pickaxe & Drills**************************/
 
