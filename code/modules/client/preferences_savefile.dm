@@ -219,6 +219,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["chat_toggles"]		>> chat_toggles
 	S["toggles"]			>> toggles
 	S["ghost_form"]			>> ghost_form
+	S["clientfps"]			>> clientfps
 	S["ghost_orbit"]		>> ghost_orbit
 	S["ghost_accs"]			>> ghost_accs
 	S["ghost_others"]		>> ghost_others
@@ -242,6 +243,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	default_slot	= sanitize_integer(default_slot, 1, max_save_slots, initial(default_slot))
 	toggles			= sanitize_integer(toggles, 0, 65535, initial(toggles))
 	ghost_form		= sanitize_inlist(ghost_form, ghost_forms, initial(ghost_form))
+	clientfps		= sanitize_integer(clientfps, 0, 1000, 0)
 	ghost_orbit 	= sanitize_inlist(ghost_orbit, ghost_orbits, initial(ghost_orbit))
 	ghost_accs		= sanitize_inlist(ghost_accs, ghost_accs_options, GHOST_ACCS_DEFAULT_OPTION)
 	ghost_others	= sanitize_inlist(ghost_others, ghost_others_options, GHOST_OTHERS_DEFAULT_OPTION)
@@ -270,6 +272,7 @@ SAVEFILE UPDATING/VERSIONING - 'Simplified', or rather, more coder-friendly ~Car
 	S["toggles"]			<< toggles
 	S["chat_toggles"]		<< chat_toggles
 	S["ghost_form"]			<< ghost_form
+	S["clientfps"]			<< clientfps
 	S["ghost_orbit"]		<< ghost_orbit
 	S["ghost_accs"]			<< ghost_accs
 	S["ghost_others"]		<< ghost_others
