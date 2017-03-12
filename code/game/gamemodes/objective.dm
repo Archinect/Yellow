@@ -275,6 +275,33 @@
 						return 1
 	return 0
 
+datum/objective/meme_hijack
+	explanation_text = "Улетите на эвакуационном шаттле в одиночку."
+	dangerrating = 25
+	martyr_compatible = 0 //Technically you won't get both anyway.
+
+datum/objective/meme_hijack/check_completion()
+	if(!owner.current - host|| owner.current.stat - host)
+		return 0
+	if(SSshuttle.emergency.mode < SHUTTLE_ENDGAME)
+		return 0
+	if(issilicon(owner.current))
+		return 0
+
+	var/area/A = get_area(owner.current)
+	if(SSshuttle.emergency.areaInstance != A)
+		return 0
+
+	for(var/mob/living/player in player_list - host)
+		if(player.mind && player.mind != owner)
+			if(player.stat != DEAD)
+				switch(player.type)
+					if(/mob/living/silicon/ai, /mob/living/silicon/pai)
+						continue
+				if(get_area(player) == A)
+					return 0
+	return 1
+
 /datum/objective/block
 	explanation_text = "Do not allow any organic lifeforms to escape on the shuttle alive."
 	dangerrating = 25
@@ -499,6 +526,8 @@ var/global/list/possible_items = list()
 	return steal_target
 
 /datum/objective/steal/check_completion()
+	if(istype(owner.current, /mob/living/parasite/meme))
+		owner.current = host
 	if(!steal_target)
 		return 1
 	if(!isliving(owner.current))
@@ -703,6 +732,21 @@ var/global/list/possible_items_special = list()
 		explanation_text = "Destroy [target.name], the experimental AI."
 	else
 		explanation_text = "Free Objective"
+
+datum/objective/attune
+	dangerrating = 10
+	martyr_compatible = 0
+
+datum/objective/attune/proc/gen_amount_goal(var/lowbound = 4, var/highbound = 6)
+	target_amount = rand (lowbound,highbound)
+	explanation_text = "Поработите [target_amount] разумов."
+	return target_amount
+
+datum/objective/attune/check_completion()
+	if(owner && owner.current && istype(owner.current,/mob/living/parasite/meme) && (owner.current:indoctrinated.len >= target_amount))
+		return 1
+	else
+		return 0
 
 /datum/objective/summon_guns
 	explanation_text = "Steal at least five guns!"

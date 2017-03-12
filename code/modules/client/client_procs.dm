@@ -397,3 +397,9 @@ var/next_external_rsc = 0
 //Like for /atoms, but clients are their own snowflake FUCK
 /client/proc/setDir(newdir)
 	dir = newdir
+
+/client/proc/special_role_accept(role_name) //used for asking players if they wanna be a special role
+	var/response = alert(src, "Would you like to play as [role_name]?", "Spawn confirmation", "Yes", "No")
+	if(!src)	return
+	if(response == "Yes")
+		return 1
