@@ -591,7 +591,7 @@
 "als" = (/obj/structure/disposalpipe/segment,/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,/turf/open/floor/plating,/area/maintenance/fsmaint)
 "alt" = (/obj/structure/disposalpipe/segment,/obj/structure/cable{d1 = 1; d2 = 2; icon_state = "1-2"; pixel_y = 0},/obj/machinery/atmospherics/pipe/simple/supply/hidden,/turf/open/floor/plating,/area/maintenance/fsmaint)
 "alu" = (/obj/item/stack/rods,/turf/open/space,/area/space)
-"alv" = (/obj/machinery/button/door{id = "secpod"; name = "Security Hangar"; pixel_x = 25; pixel_y = -5; req_access_txt = "2"},/turf/open/space,/area/space)
+"alv" = (/obj/machinery/button/door{id = "secpod"; name = "Security Hangar"; pixel_x = 25; pixel_y = -5; req_access_txt = "2"},/turf/open/space,/area/pod_hangar/security)
 "alw" = (/obj/structure/grille,/obj/structure/window/reinforced/fulltile,/turf/open/floor/plating,/area/pod_hangar/security)
 "alx" = (/obj/machinery/door/airlock/security{name = "Interrogation"; req_access = null; req_access_txt = "63"},/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,/turf/open/floor/plasteel/black,/area/security/prison)
 "aly" = (/obj/structure/cable{d1 = 1; d2 = 2; icon_state = "1-2"; pixel_y = 0},/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden,/turf/open/floor/plasteel/red/corner{dir = 1},/area/security/brig)
