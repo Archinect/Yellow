@@ -74,6 +74,13 @@
 		O.adjustFireLoss(getFireLoss())
 		O.radiation = radiation
 
+		//keep meme
+	var/list/parasites = src.parasites
+
+	if(parasites)
+		for(var/mob/living/parasite/P in parasites)
+			P.exit_host()
+
 	//re-add implants to new mob
 	if (tr_flags & TR_KEEPIMPLANTS)
 		for(var/obj/item/weapon/implant/I in implants)
@@ -95,6 +102,10 @@
 			O.mind.changeling.purchasedpowers += new /obj/effect/proc_holder/changeling/humanform(null)
 	if (tr_flags & TR_DEFAULTMSG)
 		O.text2tab("<B>You are now a monkey.</B>")
+
+	if(parasites)
+		for(var/mob/living/parasite/P in parasites)
+			P.switch_host(O)
 
 	for(var/A in loc.vars)
 		if(loc.vars[A] == src)
@@ -217,6 +228,10 @@
 	O.a_intent = "help"
 	if (tr_flags & TR_DEFAULTMSG)
 		O.text2tab("<B>You are now a human.</B>")
+
+	if(parasites)
+		for(var/mob/living/parasite/P in parasites)
+			P.switch_host(O)
 
 	. = O
 
