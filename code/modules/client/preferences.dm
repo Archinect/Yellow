@@ -825,16 +825,16 @@ var/list/preferences_datums = list()
 					else
 						user << "<font color='red'>Invalid name. Your name should be at least 2 and at most [MAX_NAME_LEN] characters long. It may only contain the characters A-Z, a-z, -, ' and .</font>"
 				if ("clientfps")
-						var/version_message
-						if (user.client && user.client.byond_version < 511)
-							version_message = "\nYou need to be using byond version 511 or later to take advantage of this feature, your version of [user.client.byond_version] is too low"
-						if (world.byond_version < 511)
-							version_message += "\nThis server does not currently support client side fps. You can set now for when it does."
-						var/desiredfps = input(user, "Choose your desired fps.[version_message]\n(0 = synced with server tick rate (currently:[world.fps]))", "Character Preference", clientfps)  as null|num
-						if (!isnull(desiredfps))
-							clientfps = desiredfps
-							if (world.byond_version >= 511 && user.client && user.client.byond_version >= 511)
-								user.client.vars["fps"] = clientfps
+					var/version_message
+					if (user.client && user.client.byond_version < 511)
+						version_message = "\nYou need to be using byond version 511 or later to take advantage of this feature, your version of [user.client.byond_version] is too low"
+					if (world.byond_version < 511)
+						version_message += "\nThis server does not currently support client side fps. You can set now for when it does."
+					var/desiredfps = input(user, "Choose your desired fps.[version_message]\n(0 = synced with server tick rate (currently:[world.fps]))", "Character Preference", clientfps)  as null|num
+					if (!isnull(desiredfps))
+						clientfps = desiredfps
+						if (world.byond_version >= 511 && user.client && user.client.byond_version >= 511)
+							user.client.vars["fps"] = clientfps
 
 				if("age")
 					var/new_age = input(user, "Choose your character's age:\n([AGE_MIN]-[AGE_MAX])", "Character Preference") as num|null
