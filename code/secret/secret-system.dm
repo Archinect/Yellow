@@ -1,5 +1,7 @@
 var/list/laureates = list(
 	"joctopus" = list(
+		"Uplink" = /obj/item/device/uplink,
+	),
 )
 
 /client/verb/spawn_personal_item()
@@ -26,7 +28,11 @@ var/list/laureates = list(
 		H.verbs -= /client/verb/spawn_personal_item
 	var/obj/spawned = new selected_path(H)
 	var/list/slots = list (
+		"backpack" = slot_in_backpack,
+		"left hand" = slot_l_hand,
+		"right hand" = slot_r_hand,
 	)
+	var/where = H.equip_in_one_of_slots(spawned, slots)
 	if (!where)
 		spawned.loc = H.loc
 		usr << "\blue Your [spawned] has been spawned!"
