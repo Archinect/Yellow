@@ -48,7 +48,19 @@
 
 		GetSeats()
 			return 1
+	cadillac/
+		name = "cadillac"
+		icon_state = "cadillac"
+		health = 500
 
+		GetArmor()
+			return new /obj/item/weapon/pod_attachment/armor/heavy(src)
+
+		GetPowercell()
+			return new /obj/item/weapon/stock_parts/cell/super(src)
+
+		GetSeats()
+			return 2
 	syndicate/
 		name = "syndicate pod"
 		icon_state = "pod_synd"
@@ -113,7 +125,7 @@
 	move_cooldown = 1.8
 
 	GetSeats()
-		return 0
+		return 1
 
 	pre_equipped/
 

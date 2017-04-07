@@ -391,6 +391,12 @@ Sorry Giacom. Please don't be mad :(
 	set name = "Sleep"
 	set category = "IC"
 
+	if(iscarbon(src))
+		var/mob/living/carbon/O = src
+		for(var/mob/living/parasite/meme/M in O.parasites)
+			src<<"You feel unable to sleep right now"
+			return
+
 	if(sleeping)
 		src.text2tab("<span class='notice'>You are already sleeping.</span>")
 		return
@@ -889,6 +895,10 @@ Sorry Giacom. Please don't be mad :(
 	if(istype(loc, /obj/mecha))
 		var/obj/mecha/M = loc
 		loc_temp =  M.return_temperature()
+
+	else if(istype(loc, /obj/pod))
+		var/obj/pod/P = loc
+		loc_temp =  P.return_temperature()
 
 	else if(istype(loc, /obj/structure/transit_tube_pod))
 		loc_temp = environment.temperature

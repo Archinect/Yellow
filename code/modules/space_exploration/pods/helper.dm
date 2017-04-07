@@ -222,6 +222,11 @@
 
 		return 1
 
+	// Gets the turf to side of the pod
+	proc/GetDirectionalTurf(var/d)
+		var/turf/target_turf = get_step(get_turf(src), d)
+		return target_turf
+
 	// Gets the turfs to side of the pod, adjusts for 2x2.
 	proc/GetDirectionalTurfs(var/d)
 		var/turf/location = get_turf(src)

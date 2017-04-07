@@ -45,11 +45,14 @@
 		return image(icon = "icons/obj/pod-[size[1]]-[size[2]].dmi", icon_state = src.overlay_icon_state)
 
 	proc/StartAttach(var/obj/pod/pod, var/mob/user)
-		user.text2tab("<span class='info'>You start attaching the [src] to the [GetHardpointDisplayName()] of the [pod].</span>")
-		if(do_after(user, attachment_delay))
-			user.unEquip(src, 1)
-			user.text2tab("<span class='info'>You finished attaching the [src].</span>")
-			OnAttach(pod, user)
+		if(istype(pod, /obj/pod/large/cadillac))
+			return 0
+		else
+			user.text2tab("<span class='info'>You start attaching the [src] to the [GetHardpointDisplayName()] of the [pod].</span>")
+			if(do_after(user, attachment_delay))
+				user.unEquip(src, 1)
+				user.text2tab("<span class='info'>You finished attaching the [src].</span>")
+				OnAttach(pod, user)
 
 	proc/StartDetach(var/obj/pod/pod, var/mob/user)
 		if(!can_detach)

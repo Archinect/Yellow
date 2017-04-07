@@ -540,6 +540,14 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	item = /obj/item/weapon/pen/edagger
 	cost = 2
 
+/datum/uplink_item/stealthy_weapons/balisong
+	name = "Butterfly Knife"
+	desc = "A razor sharp concealable knife used by martial artists ,\
+	whilst not as strong as the popular energy sword, it can be opened and closed \
+	with a flick of your wrist with relatively little noise."
+	item = /obj/item/weapon/melee/balisong
+	cost = 5
+
 /datum/uplink_item/stealthy_weapons/foampistol
 	name = "Toy Gun with Riot Darts"
 	desc = "An innocent-looking toy pistol designed to fire foam darts. Comes loaded with riot-grade \
@@ -1074,6 +1082,12 @@ var/list/uplink_items = list() // Global list so we only initialize this once.
 	desc = "Strong flavor, dense smoke, infused with omnizine."
 	item = /obj/item/weapon/storage/fancy/cigarettes/cigpack_syndicate
 	cost = 2
+
+/datum/uplink_item/badass/syndiefedora
+	name = "Syndicate Fedora"
+	desc = "This Syndicate Fedora of micro-woven adamantium silk is sure to prove your style!"
+	item = /obj/item/clothing/head/det_hat/evil
+	cost = 5
 
 /datum/uplink_item/badass/balloon
 	name = "Syndicate Balloon"
